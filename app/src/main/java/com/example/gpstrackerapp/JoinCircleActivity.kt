@@ -64,7 +64,7 @@ class JoinCircleActivity : AppCompatActivity() {
                                 var join_user_id =
                                     FirebaseDatabase.getInstance().getReference().child("Users")
                                         .orderByChild("code").equalTo(pinview.value)
-                                join_user_id.addValueEventListener(object :
+                                join_user_id.addListenerForSingleValueEvent(object :
                                     ValueEventListener {
                                     override fun onDataChange(snapshot2: DataSnapshot) {
                                         for (ds1 in snapshot2.children) {
