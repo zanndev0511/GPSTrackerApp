@@ -98,31 +98,34 @@ class MyCircleActivity : AppCompatActivity() {
             .child(auth.currentUser!!.uid).child("CircleMembers")
             .child(remove_friend_id.toString())
 //              Xóa mình ở đối phương
-        if (remove_friend_id != null) {
-            var delete_me = FirebaseDatabase.getInstance().getReference().child("Users")
-                .child(remove_friend_id.toString()).child("CircleMembers")
-                .child(auth.currentUser!!.uid)
+        var delete_me = FirebaseDatabase.getInstance().getReference().child("Users")
+            .child(remove_friend_id.toString()).child("CircleMembers")
+            .child(auth.currentUser!!.uid)
 
+        if (remove_friend_id != null) {
             // Tạo đối tượng AlertDialog
 
             val alertDialogBuilder = AlertDialog.Builder(this)
             alertDialogBuilder.setTitle("Unfriend")
             alertDialogBuilder.setMessage("Are you sure you want to unfriend?")
             // Nút xác nhận
-            alertDialogBuilder.setPositiveButton("Confirm") { _, _ ->
+            alertDialogBuilder.setPositiveButton("Confirm") { dialog, _ ->
                 delete_Friend.removeValue()
                 delete_me.removeValue()
-                recreate()
+                dialog.dismiss()
                 Toast.makeText(applicationContext, "Unfriended successfully", Toast.LENGTH_SHORT)
                     .show()
+                finish()
+                recreate()
             }
 
             // Nút huỷ
             alertDialogBuilder.setNegativeButton("Cancel") { dialog, _ ->
                 dialog.cancel()
             }
-            // Hiển thị bảng thông báo
+
             alertDialogBuilder.create().show()
         }
+
     }
 }
