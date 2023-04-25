@@ -4,7 +4,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".NameActivity">
+    tools:context=".NameActivity"
+    android:background="@drawable/thumb_901069">
 
     <de.hdodenhof.circleimageview.CircleImageView
         android:id="@+id/circleImageView"

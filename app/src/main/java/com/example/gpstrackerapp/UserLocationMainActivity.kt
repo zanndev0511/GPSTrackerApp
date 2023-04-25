@@ -122,6 +122,7 @@ class UserLocationMainActivity : AppCompatActivity(), OnMapReadyCallback,
         setContentView(R.layout.activity_user_location_main)
         var inflatedView: View = layoutInflater.inflate(R.layout.header_menu, null)
 
+
         butMyLoc = findViewById<Button?>(R.id.currentLoc)
 
         t1_currentName = findViewById(R.id.title_text)
@@ -282,6 +283,9 @@ class UserLocationMainActivity : AppCompatActivity(), OnMapReadyCallback,
             ) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(
                 this,
                 android.Manifest.permission.ACCESS_COARSE_LOCATION
+            ) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(
+                this,
+                android.Manifest.permission.ACCESS_BACKGROUND_LOCATION
             ) != PackageManager.PERMISSION_GRANTED
         ) {
 

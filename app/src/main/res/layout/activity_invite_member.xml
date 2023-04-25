@@ -4,7 +4,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".InviteMemberActivity">
+    tools:context=".InviteMemberActivity"
+    android:background="@drawable/thumb_901069">
 
     <TextView
         android:id="@+id/title_invite"
@@ -29,6 +30,7 @@
         android:textAlignment="center"
         android:gravity="center"
         android:textSize="40sp"
+        android:textStyle="bold"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.498"

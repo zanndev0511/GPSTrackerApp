@@ -6,24 +6,30 @@
     <group android:checkableBehavior="single">
         <item
             android:id="@+id/nav_joinCircle"
-            android:title="Join Circle"/>
+            android:title="Join Circle"
+            android:icon="@drawable/add_friend"/>
         <item
             android:id="@+id/nav_myCircle"
-            android:title="My Circle"/>
+            android:title="My Circle"
+            android:icon="@drawable/friends"/>
 
         <item
             android:id="@+id/nav_inviteMembers"
-            android:title="Invite Members"/>
+            android:title="Invite Members"
+            android:icon="@drawable/add_group"/>
 
         <item
             android:id="@+id/nav_shareLoc"
-            android:title="Share Location"/>
+            android:title="Share Location"
+            android:icon="@drawable/share"/>
         <item
             android:id="@+id/nav_map"
-            android:title="Map Customization"/>
+            android:title="Map Customization"
+            android:icon="@drawable/map"/>
 
         <item
             android:id="@+id/nav_signOut"
-            android:title="Sign Out"/>
+            android:title="Sign Out"
+            android:icon="@drawable/logout"/>
     </group>
 </menu>

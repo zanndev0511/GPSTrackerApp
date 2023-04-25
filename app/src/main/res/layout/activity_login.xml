@@ -4,7 +4,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".LoginActivity">
+    tools:context=".LoginActivity"
+    android:background="@drawable/thumb_901069">
 
     <EditText
         android:id="@+id/editTextTextPassword"
@@ -17,6 +18,8 @@
         android:layout_marginEnd="38dp"
         android:layout_marginBottom="77dp"
         android:ems="10"
+        android:textColor="@color/white"
+        android:textColorHint="@color/white"
         android:hint="Enter your password"
         android:inputType="textPassword" />
 
@@ -31,6 +34,8 @@
         android:layout_marginEnd="35dp"
         android:layout_marginBottom="35dp"
         android:ems="10"
+        android:textColor="@color/white"
+        android:textColorHint="@color/white"
         android:hint="Enter your email"
         android:inputType="textEmailAddress" />
 

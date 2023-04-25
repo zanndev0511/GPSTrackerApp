@@ -4,7 +4,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".MapCustomizationActivity">
+    tools:context=".MapCustomizationActivity"
+    android:background="@drawable/thumb_901069">
 
     <ImageView
         android:id="@+id/map_type"
