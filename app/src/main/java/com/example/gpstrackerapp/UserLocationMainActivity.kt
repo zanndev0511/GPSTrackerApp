@@ -260,7 +260,7 @@ class UserLocationMainActivity : AppCompatActivity(), OnMapReadyCallback,
 
         mMap.uiSettings.isZoomControlsEnabled = true
 
-// Hiển thị vị trí của bạn bè
+// Hiển thị vị trí của bạn bè khi nhấn ở card_layout
         var intent = intent
         var lat = intent.getDoubleExtra("lat", 0.00000000000000000000000000000000)
         var lng = intent.getDoubleExtra("lng", 0.00000000000000000000000000000000)
@@ -320,6 +320,8 @@ class UserLocationMainActivity : AppCompatActivity(), OnMapReadyCallback,
             butMyLoc.setOnClickListener { task ->
                 getMyLocation(latLng)
             }
+
+//            Lấy điểm đánh dấu của bạn bè
 
             var member =
                 FirebaseDatabase.getInstance().getReference().child("Users").child(user.uid)

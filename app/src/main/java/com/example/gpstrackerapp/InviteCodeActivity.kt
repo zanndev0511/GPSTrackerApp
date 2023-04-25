@@ -79,7 +79,6 @@ class InviteCodeActivity : AppCompatActivity() {
 //                                            val imageRef = storageRef.child(user!!.uid + ".jpg") // Lấy tham chiếu đến hình ảnh
                                             sr.downloadUrl.addOnSuccessListener { uri ->
                                                 var download_image_path = uri.toString() // Lấy đường dẫn của hình ảnh
-//                                                Log.d("Image Path", download_image_path) // In đường dẫn ra Logcat
                                                 reference.child(user!!.uid).child("imageUrl").setValue(download_image_path)
                                                     .addOnCompleteListener { task->
                                                         if (task.isSuccessful){

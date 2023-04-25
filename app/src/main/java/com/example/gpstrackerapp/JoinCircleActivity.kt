@@ -69,9 +69,10 @@ class JoinCircleActivity : AppCompatActivity() {
                                     override fun onDataChange(snapshot2: DataSnapshot) {
                                         for (ds1 in snapshot2.children) {
                                             var join_user_id = ds1.key.toString()
+//                                            Bạn bè kết nối vào vòng kết nối của mình
                                             var circlejoin = CircleJoin(ds1.key.toString())
 //                                var join_user = FirebaseDatabase.getInstance().getReference().child("User")
-
+//                                          Mình kết nối vào vòng tròn của bạn bè
                                             val circlejoin_friend = CircleJoin(current_user_id)
 
                                             circleReference.child(join_user_id)
@@ -85,9 +86,14 @@ class JoinCircleActivity : AppCompatActivity() {
                                                         ).show()
                                                     }
                                                 }
-                                            var member_friend = FirebaseDatabase.getInstance().getReference().child("Users").child(join_user_id).child("CircleMembers").child(current_user_id).setValue(circlejoin_friend)
+                                            var member_friend =
+                                                FirebaseDatabase.getInstance().getReference()
+                                                    .child("Users").child(join_user_id)
+                                                    .child("CircleMembers").child(current_user_id)
+                                                    .setValue(circlejoin_friend)
                                         }
                                     }
+
                                     override fun onCancelled(error: DatabaseError) {
                                         TODO("Not yet implemented")
                                     }
