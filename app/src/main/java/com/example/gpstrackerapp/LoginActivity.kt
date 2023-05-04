@@ -26,6 +26,7 @@ class LoginActivity : AppCompatActivity() {
     lateinit var e1: EditText
     lateinit var e2: EditText
     lateinit var forgot_pass: TextView
+    lateinit var btn_signup: TextView
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_login)
@@ -33,8 +34,14 @@ class LoginActivity : AppCompatActivity() {
         e1 = findViewById(R.id.editTextTextEmailAddress)
         e2 = findViewById(R.id.editTextTextPassword)
         forgot_pass = findViewById(R.id.forgot_pass)
+        btn_signup = findViewById(R.id.textViewSignUp)
         auth = FirebaseAuth.getInstance()
 
+//        Chưa có tài khoản thì đăng ký
+        btn_signup.setOnClickListener {
+            var intent = Intent(this, RegisterActivity::class.java)
+            startActivity(intent)
+        }
         //đổi màu chữ khi chạm vào
         forgot_pass.setOnTouchListener { view, motionEvent ->
             when (motionEvent.action) {

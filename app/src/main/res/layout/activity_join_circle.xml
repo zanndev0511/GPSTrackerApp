@@ -33,6 +33,7 @@
         android:gravity="center"
         android:textStyle="bold"
         android:text="Enter circle code to join"
+        android:textColor="@color/white"
         android:textSize="25sp" />
 
     <com.goodiebag.pinview.Pinview

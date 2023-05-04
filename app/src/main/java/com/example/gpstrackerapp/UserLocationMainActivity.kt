@@ -63,6 +63,7 @@ class UserLocationMainActivity : AppCompatActivity(), OnMapReadyCallback,
     lateinit var i1: ImageView
     lateinit var butMyLoc: Button
     var currentMarker: Marker? = null
+    var current_friend_Marker: Marker? = null
 
     companion object
 
@@ -365,15 +366,19 @@ class UserLocationMainActivity : AppCompatActivity(), OnMapReadyCallback,
                                                                 override fun onDataChange(snapshot4: DataSnapshot) {
                                                                     val memberCir_lo =
                                                                         LatLng(latmember, lngmember)
-                                                                    mMap.addMarker(
-                                                                        MarkerOptions()
-                                                                            .position(memberCir_lo)
-                                                                            .title(
-                                                                                snapshot4.getValue()
-                                                                                    .toString()
-                                                                            )
-                                                                    )
-
+                                                                    var option_friend = MarkerOptions()
+                                                                        .position(memberCir_lo)
+                                                                        .title(
+                                                                            snapshot4.getValue()
+                                                                                .toString()
+                                                                        )
+                                                                    if (current_friend_Marker != null) {
+                                                                        current_friend_Marker!!.remove()
+                                                                    }
+                                                                    current_friend_Marker = mMap.addMarker(option_friend)
+//                                                                    mMap.addMarker(
+//
+//                                                                    )
                                                                 }
 
                                                                 override fun onCancelled(error: DatabaseError) {
@@ -419,6 +424,7 @@ class UserLocationMainActivity : AppCompatActivity(), OnMapReadyCallback,
             }
             currentMarker = mMap.addMarker(options)
         }
+
 
     }
 

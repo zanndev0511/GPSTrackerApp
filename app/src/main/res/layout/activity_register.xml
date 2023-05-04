@@ -18,7 +18,14 @@
         android:layout_marginEnd="44dp"
         android:layout_marginBottom="181dp"
         android:ems="10"
-        android:hint="Enter your email"
+        android:hint=" Enter your email"
+        android:drawableLeft="@drawable/baseline_email_24"
+        android:drawableTint="#FFFFFF"
+        android:background="@drawable/input_bg"
+        android:paddingLeft="20dp"
+        android:paddingTop="10dp"
+        android:paddingRight="10dp"
+        android:paddingBottom="10dp"
         android:textColor="@color/white"
         android:textColorHint="@color/white"
         android:inputType="textEmailAddress" />
@@ -34,6 +41,7 @@
         android:layout_marginEnd="162dp"
         android:layout_marginBottom="267dp"
         android:onClick="goToPasswordActivity"
+        android:backgroundTint="#384695"
         android:text="Next" />
 
     <ProgressBar
