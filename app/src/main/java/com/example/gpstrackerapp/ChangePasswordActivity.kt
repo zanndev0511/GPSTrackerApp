@@ -6,6 +6,7 @@ import android.widget.Button
 import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
+import com.google.firebase.auth.EmailAuthProvider
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
@@ -59,31 +60,92 @@ class ChangePasswordActivity : AppCompatActivity() {
         })
         ok.setOnClickListener {
             //        load mật khẩu cũ và so sánh với mật khẩu mới
-            var getOldPass = FirebaseDatabase.getInstance().getReference().child("Users")
-                .child(FirebaseAuth.getInstance().currentUser!!.uid).child("password")
-            getOldPass.addListenerForSingleValueEvent(object : ValueEventListener {
-                override fun onDataChange(snapshot: DataSnapshot) {
-//                var salt = BCrypt.gensalt()
-                    if (BCrypt.checkpw(old_pass.text.toString(), snapshot.getValue().toString())) {
+            // Create a credential with the user's current email and password
+            val credential = EmailAuthProvider.getCredential(
+                FirebaseAuth.getInstance().currentUser?.email ?: "",
+                old_pass.text.toString()
+            )
+
+// Re-authenticate the user to confirm their identity
+            FirebaseAuth.getInstance().currentUser?.reauthenticate(credential)
+                ?.addOnCompleteListener { reauthTask ->
+                    if (reauthTask.isSuccessful) {
+                        // If reauthentication is successful, update the user's password
                         if (new_pass.text.toString() == retype_pass.text.toString()) {
-                            var salt = BCrypt.gensalt()
-                            getOldPass.setValue(BCrypt.hashpw(new_pass.text.toString(),salt))
-                            FirebaseAuth.getInstance().currentUser!!.updatePassword(new_pass.text.toString())
-                        }
-                        else{
-                            Toast.makeText(applicationContext, "Unmatched with new password!", Toast.LENGTH_SHORT).show()
-                        }
-                    }
-                    else{
-                        Toast.makeText(applicationContext,"Your current password is incorrect!", Toast.LENGTH_SHORT).show()
-                    }
-                }
+                            FirebaseAuth.getInstance().currentUser?.updatePassword(new_pass.text.toString())
+                                ?.addOnCompleteListener { updateTask ->
+                                    if (updateTask.isSuccessful) {
+                                        // Password updated successfully
+                                        var getOldPass =
+                                            FirebaseDatabase.getInstance().getReference()
+                                                .child("Users")
+                                                .child(FirebaseAuth.getInstance().currentUser!!.uid)
+                                                .child("password")
+                                        var salt = BCrypt.gensalt()
+                                        getOldPass.setValue(
+                                            BCrypt.hashpw(
+                                                new_pass.text.toString(),
+                                                salt
+                                            )
+                                        )
+                                        Toast.makeText(
+                                            applicationContext,
+                                            "Password updated successfully!",
+                                            Toast.LENGTH_SHORT
+                                        ).show()
 
-                override fun onCancelled(error: DatabaseError) {
-                    TODO("Not yet implemented")
-                }
+                                    } else {
+                                        // Password update failed
+                                        Toast.makeText(
+                                            applicationContext,
+                                            "Password update failed!",
+                                            Toast.LENGTH_SHORT
+                                        ).show()
+                                    }
+                                }
+                        } else {
+                            // Reauthentication failed
 
-            })
+                            Toast.makeText(
+                                applicationContext,
+                                "Your current password is incorrect!",
+                                Toast.LENGTH_SHORT
+                            ).show()
+                        }
+                    } else {
+                        Toast.makeText(
+                            applicationContext,
+                            "Unmatched with new password!",
+                            Toast.LENGTH_SHORT
+                        ).show()
+                    }
+
+                }
+            //            var getOldPass = FirebaseDatabase.getInstance().getReference().child("Users")
+//                .child(FirebaseAuth.getInstance().currentUser!!.uid).child("password")
+//            getOldPass.addListenerForSingleValueEvent(object : ValueEventListener {
+//                override fun onDataChange(snapshot: DataSnapshot) {
+////                var salt = BCrypt.gensalt()
+//                    if (BCrypt.checkpw(old_pass.text.toString(), snapshot.getValue().toString())) {
+//                        if (new_pass.text.toString() == retype_pass.text.toString()) {
+//                            var salt = BCrypt.gensalt()
+//                            getOldPass.setValue(BCrypt.hashpw(new_pass.text.toString(),salt))
+//                            FirebaseAuth.getInstance().currentUser!!.updatePassword(new_pass.text.toString())
+//                        }
+//                        else{
+//                            Toast.makeText(applicationContext, "Unmatched with new password!", Toast.LENGTH_SHORT).show()
+//                        }
+//                    }
+//                    else{
+//
+//                    }
+//                }
+//
+//                override fun onCancelled(error: DatabaseError) {
+//                    TODO("Not yet implemented")
+//                }
+//
+//            })
         }
 
     }

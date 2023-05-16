@@ -1,6 +1,7 @@
 package com.example.gpstrackerapp
 
-import android.content.Context
+import android.Manifest
+import android.app.PendingIntent
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.location.Location
@@ -20,6 +21,7 @@ import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout
 import com.google.android.gms.common.ConnectionResult
 import com.google.android.gms.common.api.GoogleApiClient
+import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationListener
 import com.google.android.gms.location.LocationRequest
 import com.google.android.gms.location.LocationServices
@@ -35,8 +37,15 @@ import com.google.android.material.navigation.NavigationView
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.database.*
-import com.google.firebase.database.ktx.getValue
+import com.karumi.dexter.Dexter
+import com.karumi.dexter.PermissionToken
+import com.karumi.dexter.listener.PermissionDeniedResponse
+import com.karumi.dexter.listener.PermissionGrantedResponse
+import com.karumi.dexter.listener.PermissionRequest
+import com.karumi.dexter.listener.single.PermissionListener
 import com.squareup.picasso.Picasso
+import java.net.CacheRequest
+
 
 class UserLocationMainActivity : AppCompatActivity(), OnMapReadyCallback,
     GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener,
@@ -65,9 +74,21 @@ class UserLocationMainActivity : AppCompatActivity(), OnMapReadyCallback,
     var currentMarker: Marker? = null
     var current_friend_Marker: Marker? = null
 
-    companion object
+    companion object{
+        var isSatelliteMapEnabled: Boolean? = null
+        var instance: UserLocationMainActivity? = null
 
-    var isSatelliteMapEnabled: Boolean? = null
+
+//        var locationRequest: LocationRequest? = null
+//        var fusedLocationProviderClient: FusedLocationProviderClient? = null
+    }
+    fun getInstance(): UserLocationMainActivity{
+        return instance!!
+    }
+    lateinit var locationRequest: LocationRequest
+    lateinit var fusedLocationProviderClient: FusedLocationProviderClient
+
+
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         if (actionBarDrawerToggle.onOptionsItemSelected(item)) {
@@ -116,11 +137,30 @@ class UserLocationMainActivity : AppCompatActivity(), OnMapReadyCallback,
 
             }
         }
+
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_user_location_main)
+        instance = this
+        Dexter.withContext(this)
+            .withPermission(android.Manifest.permission.ACCESS_FINE_LOCATION)
+            .withListener(object : PermissionListener {
+                override fun onPermissionGranted(response: PermissionGrantedResponse) { /* ... */
+                    updateLocation()
+                }
+
+                override fun onPermissionDenied(response: PermissionDeniedResponse) { /* ... */
+                    Toast.makeText(applicationContext, "You must accept this location!",Toast.LENGTH_SHORT).show()
+                }
+
+                override fun onPermissionRationaleShouldBeShown(
+                    permission: PermissionRequest?,
+                    token: PermissionToken?
+                ) {
+                }
+            }).check()
         var inflatedView: View = layoutInflater.inflate(R.layout.header_menu, null)
 
 
@@ -218,6 +258,38 @@ class UserLocationMainActivity : AppCompatActivity(), OnMapReadyCallback,
             drawerLayout.closeDrawer(GravityCompat.START)
             true
         }
+    }
+
+    private fun updateLocation() {
+        buildLocationRequest()
+        fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this)
+        if (ActivityCompat.checkSelfPermission(
+                this,
+                Manifest.permission.ACCESS_FINE_LOCATION
+            ) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(
+                this,
+                Manifest.permission.ACCESS_COARSE_LOCATION
+            ) != PackageManager.PERMISSION_GRANTED
+        ) {
+
+            return
+        }
+
+        fusedLocationProviderClient!!.requestLocationUpdates(locationRequest!!, getPendingIntent()!!)
+    }
+
+    private fun getPendingIntent(): PendingIntent? {
+        var intent: Intent = Intent(this, MyLocationService::class.java)
+        intent.setAction(MyLocationService.ACTION_PROCESS_UPDATE)
+        return PendingIntent.getBroadcast(this,0, intent, PendingIntent.FLAG_MUTABLE)
+    }
+
+    private fun buildLocationRequest() {
+        locationRequest = LocationRequest()
+        locationRequest!!.priority = LocationRequest.PRIORITY_HIGH_ACCURACY
+        locationRequest!!.interval = 5000
+        locationRequest!!.fastestInterval = 3000
+        locationRequest!!.smallestDisplacement = 10f
     }
 
     override fun onMapReady(googleMap: GoogleMap) {
@@ -450,5 +522,14 @@ class UserLocationMainActivity : AppCompatActivity(), OnMapReadyCallback,
             .bearing(0f)
             .build()
         mMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition))
+    }
+    fun update_location(loca_lat: Double, loca_lng: Double){
+        this.runOnUiThread ( object : Runnable{
+            override fun run() {
+                var updateLatLng = FirebaseDatabase.getInstance().getReference().child("Users").child(FirebaseAuth.getInstance().currentUser!!.uid).child("lat").setValue(loca_lat)
+                var updateLng = FirebaseDatabase.getInstance().getReference().child("Users").child(FirebaseAuth.getInstance().currentUser!!.uid).child("lat").setValue(loca_lng)
+            }
+
+        })
     }
 }

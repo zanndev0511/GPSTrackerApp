@@ -1,9 +1,11 @@
 package com.example.gpstrackerapp
 
+import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
 import android.view.View
+import android.widget.Button
 import android.widget.Toast
 import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.appcompat.widget.Toolbar
@@ -26,12 +28,19 @@ class JoinCircleActivity : AppCompatActivity() {
     lateinit var user: FirebaseUser
     lateinit var auth: FirebaseAuth
     lateinit var join_user_id: String
+    lateinit var qr_button: Button
 
     //    lateinit var join_user_id: String
     lateinit var circleReference: DatabaseReference
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_join_circle)
+
+        qr_button = findViewById(R.id.qr_btn)
+        qr_button.setOnClickListener {
+            var intent = Intent(this, ScannerQRActivity::class.java)
+            startActivity(intent)
+        }
         pinview = findViewById(R.id.pinview)
         auth = FirebaseAuth.getInstance()
         user = auth.currentUser!!
