@@ -14,21 +14,21 @@
         android:layout_above="@+id/button5"
         android:layout_alignParentStart="true"
         android:layout_alignParentEnd="true"
-        android:layout_marginStart="39dp"
-        android:layout_marginEnd="44dp"
-        android:layout_marginBottom="181dp"
-        android:ems="10"
-        android:hint=" Enter your email"
+        android:layout_marginStart="42dp"
+        android:layout_marginEnd="42dp"
+        android:layout_marginBottom="64dp"
+        android:background="@drawable/input_bg"
         android:drawableLeft="@drawable/baseline_email_24"
         android:drawableTint="#FFFFFF"
-        android:background="@drawable/input_bg"
+        android:ems="10"
+        android:hint=" Enter your email"
+        android:inputType="textEmailAddress"
         android:paddingLeft="20dp"
         android:paddingTop="10dp"
         android:paddingRight="10dp"
         android:paddingBottom="10dp"
         android:textColor="@color/white"
-        android:textColorHint="@color/white"
-        android:inputType="textEmailAddress" />
+        android:textColorHint="@color/white" />
 
     <Button
         android:id="@+id/button5"
@@ -37,11 +37,11 @@
         android:layout_alignParentStart="true"
         android:layout_alignParentEnd="true"
         android:layout_alignParentBottom="true"
-        android:layout_marginStart="155dp"
-        android:layout_marginEnd="162dp"
-        android:layout_marginBottom="267dp"
-        android:onClick="goToPasswordActivity"
+        android:layout_marginStart="156dp"
+        android:layout_marginEnd="156dp"
+        android:layout_marginBottom="221dp"
         android:backgroundTint="#384695"
+        android:onClick="goToPasswordActivity"
         android:text="Next" />
 
     <ProgressBar
@@ -56,4 +56,11 @@
         android:layout_marginEnd="180dp"
         android:layout_marginBottom="538dp"
         android:visibility="gone"/>
+
+    <ImageView
+        android:id="@+id/imageView3"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:adjustViewBounds="true"
+        app:srcCompat="@drawable/gummy" />
 </RelativeLayout>

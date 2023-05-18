@@ -50,7 +50,7 @@
         android:layout_marginBottom="405dp"
         app:pinLength="6"
         app:cursorVisible="true"
-        app:forceKeyboard="true"
+        app:forceKeyboard="false"
         app:inputType="number">
 
     </com.goodiebag.pinview.Pinview>

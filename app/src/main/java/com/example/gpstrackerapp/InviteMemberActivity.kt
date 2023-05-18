@@ -26,27 +26,28 @@ class InviteMemberActivity : AppCompatActivity() {
         code = findViewById(R.id.code)
         ivQRCode = findViewById(R.id.imageQR)
 
-        val data = code.text.toString().trim()
-        val writer = QRCodeWriter()
-        try {
-            val bitMatrix = writer.encode(data, BarcodeFormat.QR_CODE, 700, 700)
-            val width = bitMatrix.width
-            val height = bitMatrix.height
-            val bmp = Bitmap.createBitmap(width, height, Bitmap.Config.RGB_565)
-            for (x in 0 until width){
-                for (y in 0 until height){
-                    bmp.setPixel(x, y, if(bitMatrix[x,y]) Color.BLACK else Color.WHITE)
-                }
-            }
-            ivQRCode.setImageBitmap(bmp)
-        }catch (e: WriterException){
-            e.printStackTrace()
-        }
+
 
         var myCode = FirebaseDatabase.getInstance().getReference().child("Users").child(FirebaseAuth.getInstance().currentUser!!.uid).child("code")
         myCode.addListenerForSingleValueEvent(object :ValueEventListener{
             override fun onDataChange(snapshot: DataSnapshot) {
                 code.setText(snapshot.getValue().toString())
+                val data = code.text.toString().trim()
+                val writer = QRCodeWriter()
+                try {
+                    val bitMatrix = writer.encode(data, BarcodeFormat.QR_CODE, 700, 700)
+                    val width = bitMatrix.width
+                    val height = bitMatrix.height
+                    val bmp = Bitmap.createBitmap(width, height, Bitmap.Config.RGB_565)
+                    for (x in 0 until width){
+                        for (y in 0 until height){
+                            bmp.setPixel(x, y, if(bitMatrix[x,y]) Color.BLACK else Color.WHITE)
+                        }
+                    }
+                    ivQRCode.setImageBitmap(bmp)
+                }catch (e: WriterException){
+                    e.printStackTrace()
+                }
             }
 
             override fun onCancelled(error: DatabaseError) {

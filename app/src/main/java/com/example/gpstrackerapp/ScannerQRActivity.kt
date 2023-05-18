@@ -4,6 +4,7 @@ import android.content.Context
 import android.content.pm.PackageManager
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.util.Log
 import android.widget.Toast
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
@@ -16,11 +17,15 @@ import com.budiyev.android.codescanner.ScanMode
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
+import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
 
 class ScannerQRActivity : AppCompatActivity() {
     private lateinit var codeScanner: CodeScanner
+    companion object{
+        var check: Double? = null
+    }
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_scanner_qractivity)
@@ -53,9 +58,10 @@ class ScannerQRActivity : AppCompatActivity() {
 
         codeScanner.decodeCallback = DecodeCallback {
             runOnUiThread {
-                Toast.makeText(this, "Successfully", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, "Successfully!", Toast.LENGTH_SHORT).show()
                 var scan_addfriend = FirebaseDatabase.getInstance().getReference().child("Users")
                     .orderByChild("code").equalTo(it.text)
+//                check = it.text.toDouble()
                 scan_addfriend.addListenerForSingleValueEvent(object : ValueEventListener {
                     override fun onDataChange(snapshot: DataSnapshot) {
                         if (snapshot.exists()) {
@@ -74,7 +80,9 @@ class ScannerQRActivity : AppCompatActivity() {
                                         .setValue(FirebaseAuth.getInstance().currentUser!!.uid)
 
                             }
+
                         }
+
                     }
 
                     override fun onCancelled(error: DatabaseError) {
@@ -82,7 +90,9 @@ class ScannerQRActivity : AppCompatActivity() {
                     }
 
                 })
+
             }
+            finish()
         }
             codeScanner.errorCallback = ErrorCallback {
                 runOnUiThread {

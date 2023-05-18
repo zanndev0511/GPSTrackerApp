@@ -1,7 +1,9 @@
 package com.example.gpstrackerapp
 
 import android.Manifest
+import android.app.ActivityManager
 import android.app.PendingIntent
+import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.location.Location
@@ -77,7 +79,8 @@ class UserLocationMainActivity : AppCompatActivity(), OnMapReadyCallback,
     companion object{
         var isSatelliteMapEnabled: Boolean? = null
         var instance: UserLocationMainActivity? = null
-
+        var lat_location: Double? = null
+        var lng_location: Double? = null
 
 //        var locationRequest: LocationRequest? = null
 //        var fusedLocationProviderClient: FusedLocationProviderClient? = null
@@ -144,23 +147,24 @@ class UserLocationMainActivity : AppCompatActivity(), OnMapReadyCallback,
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_user_location_main)
         instance = this
-        Dexter.withContext(this)
-            .withPermission(android.Manifest.permission.ACCESS_FINE_LOCATION)
-            .withListener(object : PermissionListener {
-                override fun onPermissionGranted(response: PermissionGrantedResponse) { /* ... */
-                    updateLocation()
-                }
-
-                override fun onPermissionDenied(response: PermissionDeniedResponse) { /* ... */
-                    Toast.makeText(applicationContext, "You must accept this location!",Toast.LENGTH_SHORT).show()
-                }
-
-                override fun onPermissionRationaleShouldBeShown(
-                    permission: PermissionRequest?,
-                    token: PermissionToken?
-                ) {
-                }
-            }).check()
+        startService()
+//        Dexter.withContext(this)
+//            .withPermission(android.Manifest.permission.ACCESS_FINE_LOCATION)
+//            .withListener(object : PermissionListener {
+//                override fun onPermissionGranted(response: PermissionGrantedResponse) { /* ... */
+//                    updateLocation()
+//                }
+//
+//                override fun onPermissionDenied(response: PermissionDeniedResponse) { /* ... */
+//                    Toast.makeText(applicationContext, "You must accept this location!",Toast.LENGTH_SHORT).show()
+//                }
+//
+//                override fun onPermissionRationaleShouldBeShown(
+//                    permission: PermissionRequest?,
+//                    token: PermissionToken?
+//                ) {
+//                }
+//            }).check()
         var inflatedView: View = layoutInflater.inflate(R.layout.header_menu, null)
 
 
@@ -259,38 +263,44 @@ class UserLocationMainActivity : AppCompatActivity(), OnMapReadyCallback,
             true
         }
     }
+    fun startService(){
+        var serviceIntent: Intent = Intent(this, MyService::class.java)
+        serviceIntent.putExtra("inputExtra_lat", lat_location)
+        serviceIntent.putExtra("inputExtra_lng", lng_location)
 
-    private fun updateLocation() {
-        buildLocationRequest()
-        fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this)
-        if (ActivityCompat.checkSelfPermission(
-                this,
-                Manifest.permission.ACCESS_FINE_LOCATION
-            ) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(
-                this,
-                Manifest.permission.ACCESS_COARSE_LOCATION
-            ) != PackageManager.PERMISSION_GRANTED
-        ) {
-
-            return
-        }
-
-        fusedLocationProviderClient!!.requestLocationUpdates(locationRequest!!, getPendingIntent()!!)
+        startService(serviceIntent)
     }
+//    private fun updateLocation() {
+//        buildLocationRequest()
+//        fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this)
+//        if (ActivityCompat.checkSelfPermission(
+//                this,
+//                Manifest.permission.ACCESS_FINE_LOCATION
+//            ) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(
+//                this,
+//                Manifest.permission.ACCESS_COARSE_LOCATION
+//            ) != PackageManager.PERMISSION_GRANTED
+//        ) {
+//
+//            return
+//        }
+//
+//        fusedLocationProviderClient!!.requestLocationUpdates(locationRequest!!, getPendingIntent()!!)
+//    }
 
-    private fun getPendingIntent(): PendingIntent? {
-        var intent: Intent = Intent(this, MyLocationService::class.java)
-        intent.setAction(MyLocationService.ACTION_PROCESS_UPDATE)
-        return PendingIntent.getBroadcast(this,0, intent, PendingIntent.FLAG_MUTABLE)
-    }
+//    private fun getPendingIntent(): PendingIntent? {
+//        var intent: Intent = Intent(this, MyLocationService::class.java)
+//        intent.setAction(MyLocationService.ACTION_PROCESS_UPDATE)
+//        return PendingIntent.getBroadcast(this,0, intent, PendingIntent.FLAG_MUTABLE)
+//    }
 
-    private fun buildLocationRequest() {
-        locationRequest = LocationRequest()
-        locationRequest!!.priority = LocationRequest.PRIORITY_HIGH_ACCURACY
-        locationRequest!!.interval = 5000
-        locationRequest!!.fastestInterval = 3000
-        locationRequest!!.smallestDisplacement = 10f
-    }
+//    private fun buildLocationRequest() {
+//        locationRequest = LocationRequest()
+//        locationRequest!!.priority = LocationRequest.PRIORITY_HIGH_ACCURACY
+//        locationRequest!!.interval = 5000
+//        locationRequest!!.fastestInterval = 3000
+//        locationRequest!!.smallestDisplacement = 10f
+//    }
 
     override fun onMapReady(googleMap: GoogleMap) {
         mMap = googleMap
@@ -308,8 +318,7 @@ class UserLocationMainActivity : AppCompatActivity(), OnMapReadyCallback,
         mMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraUpdate))
 
 //        Người dùng chọn bản đồ
-        var map_custom = FirebaseDatabase.getInstance().getReference().child("Users")
-            .child(FirebaseAuth.getInstance().currentUser!!.uid).child("map_custom")
+        var map_custom = FirebaseDatabase.getInstance().getReference().child("Users").child(FirebaseAuth.getInstance().currentUser!!.uid).child("map_custom")
         map_custom.addValueEventListener(object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
                 if (snapshot.getValue().toString().equals("satelite")) {
@@ -376,6 +385,9 @@ class UserLocationMainActivity : AppCompatActivity(), OnMapReadyCallback,
     }
 
     override fun onLocationChanged(location: Location) {
+//        get lat, lng
+        lat_location = location.latitude
+        lng_location = location.longitude
         var updateLocaLat =
             FirebaseDatabase.getInstance().getReference().child("Users").child(user.uid)
                 .child("lat").setValue(location.latitude)
@@ -523,13 +535,13 @@ class UserLocationMainActivity : AppCompatActivity(), OnMapReadyCallback,
             .build()
         mMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition))
     }
-    fun update_location(loca_lat: Double, loca_lng: Double){
-        this.runOnUiThread ( object : Runnable{
-            override fun run() {
-                var updateLatLng = FirebaseDatabase.getInstance().getReference().child("Users").child(FirebaseAuth.getInstance().currentUser!!.uid).child("lat").setValue(loca_lat)
-                var updateLng = FirebaseDatabase.getInstance().getReference().child("Users").child(FirebaseAuth.getInstance().currentUser!!.uid).child("lat").setValue(loca_lng)
-            }
-
-        })
-    }
+//    fun update_location(loca_lat: Double, loca_lng: Double){
+//        this.runOnUiThread ( object : Runnable{
+//            override fun run() {
+//                var updateLatLng = FirebaseDatabase.getInstance().getReference().child("Users").child(FirebaseAuth.getInstance().currentUser!!.uid).child("lat").setValue(loca_lat)
+//                var updateLng = FirebaseDatabase.getInstance().getReference().child("Users").child(FirebaseAuth.getInstance().currentUser!!.uid).child("lat").setValue(loca_lng)
+//            }
+//
+//        })
+//    }
 }
